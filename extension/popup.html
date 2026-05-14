@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DraftFree - SWE Job Hunter</title>
+    <style>
+      :root {
+        --primary: #0073b1;
+        --primary-hover: #005582;
+        --bg: #f8f9fa;
+        --text: #1a1a1a;
+        --text-muted: #666;
+        --card-bg: #ffffff;
+      }
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        margin: 0; 
+        width: 350px; 
+        background: var(--bg);
+        color: var(--text);
+      }
+      .container { padding: 20px; }
+      h1 { 
+        font-size: 1.4em; 
+        margin: 0 0 16px 0; 
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .status-card {
+        background: var(--card-bg);
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        font-size: 0.9em;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: #eef3f8;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.85em;
+        margin-bottom: 4px;
+      }
+      #last-run-text { display: block; color: var(--text-muted); font-size: 0.8em; margin-top: 4px; }
+      #scrape-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 115, 177, 0.2);
+      }
+      #scrape-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
+      #scrape-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+      
+      .job-list { list-style: none; padding: 0; margin: 0; }
+      #job-list-container {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        padding-right: 5px;
+      }
+      /* Custom Scrollbar */
+      #job-list-container::-webkit-scrollbar { width: 6px; }
+      #job-list-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+      #job-list-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+      #job-list-container::-webkit-scrollbar-thumb:hover { background: #999; }
+      
+      .job-card {
+        background: var(--card-bg);
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border: 1px solid #eee;
+        transition: transform 0.2s ease;
+      }
+      .job-card:hover { border-color: var(--primary); transform: translateX(4px); }
+      .job-title { font-weight: 700; margin-bottom: 4px; font-size: 1em; color: var(--text); }
+      .job-company { color: var(--primary); font-size: 0.9em; font-weight: 500; }
+      .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 DraftFree</h1>
+      
+      <div class="status-card">
+        <span class="status-badge">SYSTEM STATUS</span>
+        <div id="status-text">Ready to hunt</div>
+        <small id="last-run-text">Not run yet</small>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 0.8em; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block;">JOB KEYWORDS</label>
+        <input type="text" id="query-input" placeholder="e.g. Frontend Engineer" value="Frontend Engineer" 
+               style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 0.9em; outline: none;">
+      </div>
+
+      <button id="scrape-btn">Force Scrape Now</button>
+      
+      <div id="job-list-container">
+        <ul id="job-list" class="job-list">
+          <li class="empty-state">No jobs found yet. Start a hunt!</li>
+        </ul>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
