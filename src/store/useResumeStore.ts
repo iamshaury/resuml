@@ -1,5 +1,6 @@
 "use client";
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { supabase } from '@/utils/supabase';
 
 export interface ResumeData {
@@ -52,10 +53,11 @@ const initialData: ResumeData = {
 };
 
 export const useResumeStore = create<ResumeState>()(
-  (set, get) => ({
-    formData: initialData,
-    template: 'modern',
-    resumeVector: null,
+  persist(
+    (set, get) => ({
+      formData: initialData,
+      template: 'modern',
+      resumeVector: null,
     loading: false,
     dbSynced: false,
 
@@ -172,5 +174,14 @@ export const useResumeStore = create<ResumeState>()(
         console.error('Error syncing profile:', err.message);
       }
     }
-  })
+    }),
+    {
+      name: 'resume-storage', // name of the item in the storage (must be unique)
+      partialize: (state) => ({ 
+        formData: state.formData, 
+        template: state.template,
+        resumeVector: state.resumeVector 
+      }), // Only save these fields to localStorage
+    }
+  )
 );

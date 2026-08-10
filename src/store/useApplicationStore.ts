@@ -19,16 +19,7 @@ export interface PipelineJob {
   logo?: string;
 }
 
-const SEED: PipelineJob[] = [
-  { id: 'seed-1', title: 'Senior Frontend Engineer', company: 'Stripe',   stage: 'saved',     matchScore: 94, expiresIn: 12 },
-  { id: 'seed-2', title: 'Staff Engineer',           company: 'Airbnb',   stage: 'saved',     matchScore: 87, expiresIn: 8  },
-  { id: 'seed-3', title: 'Frontend Architect',        company: 'Notion',   stage: 'saved',     matchScore: 78 },
-  { id: 'seed-4', title: 'React Lead',                company: 'Netflix',  stage: 'applied',   appliedDate: 'May 14' },
-  { id: 'seed-5', title: 'Product Engineer',          company: 'Figma',    stage: 'applied',   appliedDate: 'May 12' },
-  { id: 'seed-6', title: 'Software Engineer',         company: 'OpenAI',   stage: 'interview', matchScore: 91 },
-  { id: 'seed-7', title: 'Frontend Engineer',         company: 'Vercel',   stage: 'interview', matchScore: 89 },
-  { id: 'seed-8', title: 'Fullstack Engineer',        company: 'Meta',     stage: 'rejected' },
-];
+const SEED: PipelineJob[] = [];
 
 interface ApplicationState {
   applications: PipelineJob[];

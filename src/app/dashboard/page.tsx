@@ -102,17 +102,17 @@ function DashboardContent() {
       {/* ── Header Row ── */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="max-w-2xl">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-text-primary opacity-30" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-text-primary" />
+          <div className="flex items-center gap-2 mb-4">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-40" />
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-accent" />
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-text-tertiary">Match Feed</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-accent">Match Feed</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-text-primary leading-none mb-3">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-text-primary leading-none mb-4">
             Discover Roles
           </h1>
-          <p className="text-text-muted text-base md:text-lg max-w-xl leading-relaxed">
+          <p className="text-text-muted text-lg md:text-xl font-bold max-w-xl leading-relaxed">
             Opportunities ranked by structural similarity to your professional vector.
           </p>
         </div>
@@ -148,19 +148,19 @@ function DashboardContent() {
         {/* Search form */}
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row items-center gap-3">
           <div className="flex-1 relative group w-full">
-            <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary group-focus-within:text-text-primary transition-colors" />
+            <MagnifyingGlass className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-text-tertiary group-focus-within:text-accent transition-colors" weight="bold" />
             <input
               type="text"
               aria-label="Search jobs"
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search for a specific job title, skills, or company..."
-              className="w-full pl-12 pr-4 py-4 bg-transparent border border-border rounded-2xl text-base placeholder:text-text-tertiary focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all"
+              className="w-full pl-14 pr-6 py-5 bg-surface border-2 border-border/80 rounded-[24px] text-[15px] font-bold text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all shadow-sm"
             />
           </div>
           <button
             type="submit"
-            className="w-full sm:w-auto px-8 py-4 bg-text-primary text-surface text-sm font-bold rounded-2xl hover:scale-[0.98] transition-transform shrink-0"
+            className="w-full sm:w-auto px-10 py-5 bg-accent text-white text-[15px] font-black rounded-[24px] hover:bg-accent-secondary hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-xl shadow-accent/30 shrink-0"
           >
             Search
           </button>
@@ -168,12 +168,12 @@ function DashboardContent() {
       </div>
 
       {/* ── Toolbar ── */}
-      <div className="flex items-center justify-between py-4 border-b border-border mb-2">
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold text-text-primary tracking-tight">
+      <div className="flex items-center justify-between py-5 border-b-2 border-border mb-4">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-black text-text-primary tracking-tight">
             Results
           </h2>
-          <span className="text-xs font-bold text-text-tertiary bg-surface-hover border border-border px-2.5 py-1 rounded-full">
+          <span className="text-[13px] font-black text-text-muted bg-surface border-2 border-border/80 px-3 py-1.5 rounded-xl shadow-sm">
             {visibleJobs.length} roles
           </span>
         </div>
@@ -183,18 +183,14 @@ function DashboardContent() {
           <button 
             onClick={() => setShowLowMatches(v => !v)}
             aria-pressed={showLowMatches}
-            className={`flex items-center gap-1.5 px-3 min-h-[44px] md:min-h-0 py-2 md:py-1.5 rounded-xl text-xs font-bold border transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-black border-2 transition-all ${
               showLowMatches 
                 ? 'bg-surface border-border text-text-muted' 
-                : 'bg-surface border-border text-text-tertiary hover:text-text-muted'
+                : 'bg-surface border-border/60 text-text-tertiary hover:text-text-muted hover:border-border'
             }`}
           >
-            <ToggleRight className={`w-4 h-4 ${showLowMatches ? 'text-accent' : ''}`} weight={showLowMatches ? 'fill' : 'regular'} />
+            <ToggleRight className={`w-5 h-5 ${showLowMatches ? 'text-accent' : ''}`} weight={showLowMatches ? 'fill' : 'bold'} />
             Show low matches
-          </button>
-          <button className="flex items-center gap-1.5 px-3 min-h-[44px] md:min-h-0 py-2 md:py-1.5 bg-surface border border-border rounded-xl text-xs font-bold text-text-muted hover:text-text-primary transition-all">
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            Filter
           </button>
         </div>
       </div>

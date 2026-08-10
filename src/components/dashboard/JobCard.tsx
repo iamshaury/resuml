@@ -110,40 +110,40 @@ export default function JobCard({ job, index }: JobCardProps) {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.04 }}
-      className={`group bg-surface border rounded-3xl p-6 flex flex-col h-full relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-black/5 hover:-translate-y-1 ${
-        tier === 'strong' ? 'border-emerald-200 hover:border-emerald-300' : 
-        tier === 'good' ? 'border-amber-200 hover:border-amber-300' : 
-        'border-border hover:border-text-tertiary/40'
+      className={`group bg-surface border-2 rounded-[32px] p-6 flex flex-col h-full relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-2 ${
+        tier === 'strong' ? 'border-emerald-300 hover:border-emerald-400' : 
+        tier === 'good' ? 'border-amber-300 hover:border-amber-400' : 
+        'border-border/60 hover:border-accent/40'
       }`}
     >
       {/* Header row */}
       <div className="flex items-start gap-4 mb-6">
         {/* Company logo */}
-        <div className="w-12 h-12 bg-surface-hover rounded-2xl flex items-center justify-center border border-border overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-500 ease-out">
+        <div className="w-14 h-14 bg-surface-hover rounded-2xl flex items-center justify-center border-2 border-border overflow-hidden shrink-0 group-hover:rotate-3 transition-transform duration-500 ease-out shadow-sm">
           {job.logo_url ? (
-            <img src={job.logo_url} alt={job.company} className="w-full h-full object-cover" />
+            <img src={job.logo_url} alt={job.company} className="w-full h-full object-contain p-1.5" />
           ) : (
-            <BuildingOffice className="w-5 h-5 text-text-tertiary" />
+            <BuildingOffice className="w-6 h-6 text-text-tertiary" weight="fill" />
           )}
         </div>
 
         {/* Title + company */}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-lg text-text-primary tracking-tight line-clamp-1 mb-1">{job.title}</h3>
-          <p className="text-text-muted text-sm font-medium truncate">{job.company}</p>
+        <div className="flex-1 min-w-0 pt-1">
+          <h3 className="font-black text-[19px] text-text-primary tracking-tight line-clamp-1 mb-1">{job.title}</h3>
+          <p className="text-text-muted text-[13px] font-bold truncate">{job.company}</p>
         </div>
 
         {/* Save button */}
         <button 
           onClick={handleSaveToggle}
           aria-label={isSaved ? "Unsave job" : "Save job"}
-          className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all border shrink-0 ${
+          className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all border-2 shrink-0 ${
             isSaved 
-              ? 'text-text-primary bg-surface-hover border-border' 
-              : 'text-text-tertiary hover:text-text-primary hover:bg-surface-hover border-transparent hover:border-border'
+              ? 'text-accent bg-accent-light border-accent/40 shadow-inner' 
+              : 'text-text-tertiary bg-surface-hover border-transparent hover:text-text-primary hover:border-border hover:shadow-sm'
           }`}
         >
-          <BookmarkSimple className="w-5 h-5" weight={isSaved ? "fill" : "regular"} />
+          <BookmarkSimple className="w-6 h-6" weight={isSaved ? "fill" : "bold"} />
         </button>
       </div>
 
@@ -170,13 +170,13 @@ export default function JobCard({ job, index }: JobCardProps) {
 
       {/* Why this matches chips */}
       {whyChips.length > 0 && (
-        <div className="mb-5">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-text-tertiary mb-2">Match Vectors</p>
+        <div className="mb-6">
+          <p className="text-[10px] uppercase tracking-widest font-black text-text-tertiary mb-3">Match Vectors</p>
           <div className="flex flex-wrap gap-2">
             {whyChips.map((chip, i) => (
               <span 
                 key={i}
-                className="text-xs font-medium px-3 py-1 bg-surface-hover text-text-primary rounded-full border border-border"
+                className="text-[11px] font-black px-3 py-1 bg-surface-hover text-text-primary rounded-xl border-2 border-border/60"
               >
                 {chip}
               </span>
@@ -186,14 +186,14 @@ export default function JobCard({ job, index }: JobCardProps) {
       )}
 
       {/* Meta: location, salary */}
-      <div className="flex flex-wrap gap-3 mb-6 mt-auto">
-        <div className="flex items-center gap-1.5 text-text-muted text-sm font-medium">
-          <MapPin className="w-4 h-4 shrink-0" />
+      <div className="flex flex-wrap gap-4 mb-6 mt-auto">
+        <div className="flex items-center gap-1.5 text-text-muted text-[13px] font-bold">
+          <MapPin className="w-4 h-4 shrink-0" weight="bold" />
           <span className="truncate">{job.location || 'Remote'}</span>
         </div>
         {job.salary && (
-          <div className="flex items-center gap-1.5 text-text-muted text-sm font-medium">
-            <CurrencyDollar className="w-4 h-4 shrink-0" />
+          <div className="flex items-center gap-1.5 text-text-muted text-[13px] font-bold">
+            <CurrencyDollar className="w-4 h-4 shrink-0" weight="bold" />
             <span className="font-mono">{job.salary}</span>
           </div>
         )}
@@ -205,17 +205,18 @@ export default function JobCard({ job, index }: JobCardProps) {
           href={job.job_url || job.url || '#'}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 flex-1 bg-surface-hover border border-border text-text-primary px-4 py-3 rounded-2xl text-sm font-bold hover:bg-white hover:border-text-tertiary/30 hover:shadow-sm transition-all active:scale-[0.98]"
+          className="flex items-center justify-center gap-2 flex-[0.7] bg-bg border-2 border-border/80 text-text-primary px-4 py-3.5 rounded-2xl text-sm font-black hover:bg-surface-hover hover:border-text-tertiary hover:shadow-sm transition-all active:scale-95"
         >
-          <ArrowSquareOut className="w-4 h-4" />
+          <ArrowSquareOut className="w-5 h-5" weight="bold" />
           View
         </a>
         <Link
           href={`/builder?tailor=${job.id}`}
-          className="flex items-center justify-center gap-2 flex-1 bg-text-primary text-surface px-4 py-3 rounded-2xl text-sm font-bold transition-all hover:scale-[0.98] active:scale-[0.95] group/btn shadow-sm shadow-black/5"
+          className="flex items-center justify-center gap-2 flex-1 bg-accent text-white px-4 py-3.5 rounded-2xl text-sm font-black transition-all hover:bg-accent-secondary hover:scale-[1.02] active:scale-95 group/btn shadow-lg shadow-accent/30"
         >
-          ✨ Tailor
-          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300 ease-out" />
+          <Sparkle className="w-5 h-5" weight="fill" />
+          Tailor
+          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300 ease-out" weight="bold" />
         </Link>
       </div>
     </motion.div>

@@ -9,10 +9,12 @@ import {
   Kanban,
   PlugsConnected,
   ArrowSquareOut,
-  Circle
+  Circle,
+  Briefcase
 } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import UserMenu from "./UserMenu";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -32,55 +34,53 @@ export default function Sidebar() {
       desc: "Semantic job feed"
     },
     { 
-      name: "Pipeline", 
-      path: "/pipeline", 
-      icon: Kanban,
+      name: "Applications", 
+      path: "/applications", 
+      icon: Briefcase,
       desc: "Application tracker"
     },
   ];
 
   return (
-    <div className="w-60 h-screen bg-surface border-r border-border flex flex-col fixed left-0 top-0 z-50">
+    <div className="w-64 h-screen bg-bg border-r-2 border-border/60 flex flex-col fixed left-0 top-0 z-50">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-border">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-accent rounded-lg flex items-center justify-center shadow-sm shadow-accent/30">
-            <span className="text-white font-black text-sm tracking-tight">R</span>
+      <div className="px-6 py-8">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-accent rounded-2xl flex items-center justify-center shadow-lg shadow-accent/40 -rotate-3 hover:rotate-0 transition-transform">
+            <span className="text-white font-black text-lg tracking-tight">R</span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-text-primary">resuml</span>
+          <span className="text-2xl font-black tracking-tight text-text-primary">resuml</span>
         </Link>
-        <p className="text-[10px] text-text-tertiary mt-1 ml-9 font-medium tracking-wide uppercase">AI Copilot</p>
       </div>
 
       {/* Three Pillars */}
-      <nav className="flex-1 px-3 pt-4 space-y-1">
-        <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-widest text-text-tertiary">Workspace</p>
+      <nav className="flex-1 px-4 space-y-2">
+        <p className="px-2 mb-4 text-[10px] font-black uppercase tracking-widest text-text-tertiary">Workspace</p>
         {pillars.map((item) => {
           const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
           return (
             <Link
               key={item.name}
               href={item.path}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${
+              className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all group relative ${
                 isActive 
-                  ? "bg-accent text-white shadow-md shadow-accent/25" 
-                  : "text-text-muted hover:bg-surface-hover hover:text-text-primary"
+                  ? "bg-accent text-white shadow-xl shadow-accent/30 scale-[1.02]" 
+                  : "text-text-muted hover:bg-surface hover:text-text-primary hover:scale-[1.02]"
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="sidebar-pill"
-                  className="absolute inset-0 bg-accent rounded-xl -z-10"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  className="absolute inset-0 bg-accent rounded-2xl -z-10"
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                 />
               )}
               <item.icon 
-                className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-text-muted group-hover:text-accent transition-colors"}`} 
-                weight={isActive ? "fill" : "regular"} 
+                className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-text-muted group-hover:text-accent transition-colors"}`} 
+                weight={isActive ? "fill" : "bold"} 
               />
               <div className="flex-1 min-w-0">
-                <span className={`text-sm font-semibold block ${isActive ? "text-white" : ""}`}>{item.name}</span>
-                <span className={`text-[10px] block truncate ${isActive ? "text-white/60" : "text-text-tertiary"}`}>{item.desc}</span>
+                <span className={`text-[15px] font-bold block ${isActive ? "text-white" : ""}`}>{item.name}</span>
               </div>
             </Link>
           );
@@ -88,42 +88,29 @@ export default function Sidebar() {
       </nav>
 
       {/* Extension Status Widget */}
-      <div className="mx-3 mb-3 p-3 bg-surface-hover border border-border rounded-xl">
-        <div className="flex items-center gap-2 mb-2">
-          <PlugsConnected className={`w-4 h-4 ${extConnected ? "text-emerald-500" : "text-text-tertiary"}`} weight="fill" />
-          <span className="text-[11px] font-bold text-text-primary">Chrome Extension</span>
-          <span className={`ml-auto text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full ${
-            extConnected ? "bg-emerald-100 text-emerald-700" : "bg-surface border border-border text-text-tertiary"
+      <div className="mx-4 mb-4 p-4 bg-surface border-2 border-border/50 rounded-3xl shadow-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <PlugsConnected className={`w-5 h-5 ${extConnected ? "text-emerald-500" : "text-text-tertiary"}`} weight="bold" />
+          <span className="text-xs font-black text-text-primary">Extension</span>
+          <span className={`ml-auto text-[10px] font-black uppercase tracking-wide px-2 py-1 rounded-full ${
+            extConnected ? "bg-emerald-100 text-emerald-700" : "bg-bg text-text-tertiary"
           }`}>
             {extConnected ? "Live" : "Off"}
           </span>
-        </div>
-        <div className="space-y-1">
-          <div className="flex justify-between text-[10px]">
-            <span className="text-text-tertiary">Jobs scraped today</span>
-            <span className="font-bold text-text-primary">—</span>
-          </div>
-          <div className="flex justify-between text-[10px]">
-            <span className="text-text-tertiary">Storage saved</span>
-            <span className="font-bold text-emerald-600">0 KB</span>
-          </div>
         </div>
         <a 
           href="https://chrome.google.com/webstore" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="mt-2 flex items-center gap-1 text-[10px] text-accent font-bold hover:underline"
+          className="block w-full text-center py-2 bg-accent-light text-accent rounded-xl text-[11px] font-black hover:bg-accent hover:text-white transition-colors"
         >
-          Install Extension <ArrowSquareOut className="w-3 h-3" />
+          Install Now
         </a>
       </div>
 
       {/* Bottom */}
-      <div className="p-3 border-t border-border">
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-muted hover:bg-red-50 hover:text-red-600 transition-all group">
-          <SignOut className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          <span className="text-sm font-medium">Log Out</span>
-        </button>
+      <div className="p-4 border-t-2 border-border/60 bg-surface">
+        <UserMenu />
       </div>
     </div>
   );

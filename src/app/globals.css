@@ -2,28 +2,28 @@
 
 :root {
   /* ── Backgrounds ── */
-  --bg: #F3F4F6;
+  --bg: #FDFBFF;
   --surface: #FFFFFF;
-  --surface-hover: #F8FAFC;
-  --border: #E5E7EB;
+  --surface-hover: #F8F7FF;
+  --border: #E2E8F0;
 
   /* ── Text ── */
-  --text-primary: #0F172A;
-  --text-muted: #6B7280;
-  --text-tertiary: #9CA3AF;
+  --text-primary: #1E1B4B;
+  --text-muted: #64748B;
+  --text-tertiary: #94A3B8;
   
-  /* ── Brand Blue ── */
-  --accent: #3B82F6;
-  --accent-secondary: #2563EB;
-  --accent-light: #EFF6FF;
+  /* ── Brand Colors (Bright & Playful) ── */
+  --accent: #8B5CF6; /* Vibrant Violet */
+  --accent-secondary: #7C3AED;
+  --accent-light: #F5F3FF;
 
-  /* ── Semantic Colors ── */
+  /* ── Semantic Colors (Playful pastels & brights) ── */
   --success: #10B981;
-  --success-light: #ECFDF5;
+  --success-light: #D1FAE5;
   --warning: #F59E0B;
-  --warning-light: #FFFBEB;
-  --danger: #EF4444;
-  --danger-light: #FEF2F2;
+  --warning-light: #FEF3C7;
+  --danger: #F43F5E;
+  --danger-light: #FFE4E6;
   
   --background: var(--bg);
   --foreground: var(--text-primary);
