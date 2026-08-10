@@ -73,7 +73,7 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
 
 async function scrapeLinkedIn(query) {
   let allExtractedJobs = [];
-  const maxPages = 5; // Fetch 5 pages to get up to 50 jobs
+  const maxPages = 10// Fetch 5 pages to get up to 50 jobs
   
   for (let page = 0; page < maxPages; page++) {
     const start = page * 10;

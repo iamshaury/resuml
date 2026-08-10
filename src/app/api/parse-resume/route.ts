@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 // @ts-ignore
 import pdf from 'pdf-parse/lib/pdf-parse.js';
+import mammoth from 'mammoth';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -14,18 +15,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // Note: We skip uploading the full PDF to Supabase Storage to save space,
-    // as we only need the extracted text for the AI parser.
-
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    let rawText = '';
 
-    // Extract text from PDF
-    const data = await pdf(buffer);
-    const rawText = data.text;
+    const isDocx = file.name.endsWith('.docx') || 
+                   file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+    if (isDocx) {
+      const result = await mammoth.extractRawText({ buffer });
+      rawText = result.value;
+    } else {
+      // Extract text from PDF
+      const data = await pdf(buffer);
+      rawText = data.text;
+    }
 
     if (!rawText || rawText.trim().length === 0) {
-      return NextResponse.json({ error: "Could not extract text from PDF" }, { status: 400 });
+      return NextResponse.json({ error: `Could not extract text from ${isDocx ? 'DOCX' : 'PDF'} file` }, { status: 400 });
     }
 
     // Use Gemini to structure the data

@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     
     if (user && !userError) {
       // Save the generated vector and profile data to the database
-      await supabase.from('profiles').upsert({
+      const { error: dbError } = await supabase.from('profiles').upsert({
         id: user.id,
         vector: userVector,
         desired_roles: profileData.desiredRoles,
@@ -35,6 +35,10 @@ export async function POST(request: Request) {
         experience_level: profileData.experienceLevel,
         updated_at: new Date().toISOString(),
       });
+      
+      if (dbError) {
+        console.warn('Could not persist profile to Supabase (profiles table might not exist yet):', dbError.message);
+      }
     }
 
     // Return the vector to the client to update the global store

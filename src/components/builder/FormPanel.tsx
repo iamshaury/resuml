@@ -66,7 +66,7 @@ export default function FormPanel({ data, onChange }: FormPanelProps) {
     <div className="w-[320px] shrink-0 bg-surface border-r border-border flex flex-col h-full overflow-y-auto custom-scrollbar">
       
       {/* Tabs */}
-      <div className="p-6 pb-2">
+      <div className="shrink-0 p-6 pb-2">
         <div className="flex p-1 bg-surface-hover rounded-xl border border-border">
           <button 
             onClick={() => setActiveTab('builder')}
@@ -91,7 +91,7 @@ export default function FormPanel({ data, onChange }: FormPanelProps) {
         </div>
       </div>
 
-      <div className="px-6 pb-6">
+      <div className="shrink-0 px-6 pb-24">
         <div className="mb-6">
           <ResumeUpload />
         </div>

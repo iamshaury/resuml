@@ -1,10 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
-const supabase = createClient(
-  'https://nfzuavcvjcrtipktwlxj.supabase.co', 
-  'sb_publishable_MTD56bxRZwKlkhusQU_-qg_RmD2xBkV'
-);
-async function test() {
-  const { data, error } = await supabase.from('jobs').select('*').limit(1);
-  console.log(Object.keys(data[0]));
-}
-test();
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL + '/rest/v1/profiles?select=*&limit=1';
+const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+fetch(url, { headers: { 'apikey': key, 'Authorization': 'Bearer ' + key } })
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));

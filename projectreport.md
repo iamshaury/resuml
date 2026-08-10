@@ -25,8 +25,76 @@ Resuml is a high-performance **Resume Intelligence Suite** designed to bridge th
 
 ---
 
-## 📡 API Architecture
+## 🏗️ System Architecture
 
+```mermaid
+graph TD
+    %% Styles
+    classDef frontend fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff,rx:8px,ry:8px
+    classDef backend fill:#1e293b,stroke:#a78bfa,stroke-width:2px,color:#fff,rx:8px,ry:8px
+    classDef ai fill:#7f1d1d,stroke:#f87171,stroke-width:2px,color:#fff,rx:8px,ry:8px
+    classDef db fill:#14532d,stroke:#4ade80,stroke-width:2px,color:#fff,rx:8px,ry:8px
+    classDef ext fill:#713f12,stroke:#facc15,stroke-width:2px,color:#fff,rx:8px,ry:8px
+
+    User((🧑‍💻 User))
+    ChromeExt["🧩 Chrome Extension<br/>(LinkedIn Scraper)"]:::ext
+    
+    subgraph Frontend ["🖥️ Next.js Frontend"]
+        UI["React UI (Tailwind)"]:::frontend
+        State["Zustand (Local State)"]:::frontend
+        PDF["PDF Renderer"]:::frontend
+    end
+    
+    subgraph Backend ["⚙️ API Routes"]
+        API_Parse["/api/parse-resume"]:::backend
+        API_Vector["/api/vectorize-resume"]:::backend
+        API_Match["/api/match"]:::backend
+        API_Jobs["/api/jobs"]:::backend
+    end
+
+    subgraph AI ["🧠 Gemini AI"]
+        GeminiFlash["Gemini 1.5 Flash<br/>(Parser)"]:::ai
+        GeminiEmbed["Gemini Embedding 2<br/>(Vectorization)"]:::ai
+    end
+
+    subgraph DB ["🗄️ Supabase"]
+        PgVector[("PostgreSQL + pgvector")]:::db
+        RPC["match_jobs (RPC)"]:::db
+    end
+
+    %% User interactions
+    User -->|Uploads PDF / Types| UI
+    UI <-->|Syncs| State
+    State -->|Generates| PDF
+    PDF -->|Downloads| User
+
+    %% Parsing Flow
+    UI -->|1. Upload PDF| API_Parse
+    API_Parse -->|2. Extract text & prompt| GeminiFlash
+    GeminiFlash -->|3. JSON structure| API_Parse
+    API_Parse -->|4. Return data| UI
+
+    %% Job Ingestion Flow
+    ChromeExt -->|1. Scraped Jobs| API_Jobs
+    API_Jobs -->|2. Text content| GeminiEmbed
+    GeminiEmbed -->|3. 1536D Vectors| API_Jobs
+    API_Jobs -->|4. Upsert (No dupes)| PgVector
+
+    %% Semantic Match Flow
+    UI -->|1. Request Match| API_Vector
+    API_Vector -->|2. Resume text| GeminiEmbed
+    GeminiEmbed -->|3. Resume Vector| API_Vector
+    API_Vector -->|4. Forward Vector| API_Match
+    API_Match -->|5. Call RPC| RPC
+    RPC -->|6. Cosine Similarity| PgVector
+    PgVector -->|7. Top matched jobs| API_Match
+    API_Match -->|8. Return jobs| UI
+```
+
+---
+
+## 📡 API Architecture
+  
 ### 1. Resume Parsing (`/api/parse-resume`)
 *   **Method**: `POST` (Multipart/FormData)
 *   **Action**: Extracts raw text from an uploaded PDF, passes it to Gemini Flash with a specific schema prompt, and returns structured JSON.

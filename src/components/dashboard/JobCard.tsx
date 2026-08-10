@@ -5,104 +5,217 @@ import { motion } from 'framer-motion';
 import { 
   BuildingOffice, 
   MapPin, 
-  Calendar, 
   CurrencyDollar,
   ArrowRight,
-  ChartPie,
-  Sparkle
+  BookmarkSimple,
+  ArrowSquareOut,
+  Sparkle,
+  Lightning
 } from '@phosphor-icons/react';
 import Link from 'next/link';
+import { useApplicationStore } from '@/store/useApplicationStore';
 
 interface JobCardProps {
   job: any;
   index: number;
 }
 
+type MatchTier = 'strong' | 'good' | 'stretch' | 'none';
+
+function getMatchTier(score: number | null): MatchTier {
+  if (!score) return 'none';
+  if (score >= 90) return 'strong';
+  if (score >= 75) return 'good';
+  if (score >= 50) return 'stretch';
+  return 'none'; // hidden by default
+}
+
+const tierConfig = {
+  strong: {
+    bar: 'bg-emerald-500',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    text: 'text-emerald-700',
+    label: 'Strong Match',
+    icon: Lightning,
+  },
+  good: {
+    bar: 'bg-amber-400',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    text: 'text-amber-700',
+    label: 'Good Match',
+    icon: Sparkle,
+  },
+  stretch: {
+    bar: 'bg-slate-400',
+    bg: 'bg-slate-50',
+    border: 'border-slate-200',
+    text: 'text-slate-600',
+    label: 'Stretch Role',
+    icon: Sparkle,
+  },
+  none: {
+    bar: 'bg-slate-200',
+    bg: 'bg-surface',
+    border: 'border-border',
+    text: 'text-text-muted',
+    label: '',
+    icon: Sparkle,
+  }
+};
+
 export default function JobCard({ job, index }: JobCardProps) {
-  // Use actual similarity from DB, fallback to null if not present
-  const matchScore = job.similarity ? Math.round(job.similarity * 100) : null;
+  const { applications, addApplication, deleteApplication } = useApplicationStore();
   
-  const getScoreColor = (score: number | null) => {
-    if (!score) return 'text-text-primary bg-surface border-border';
-    if (score >= 90) return 'text-emerald-700 bg-emerald-50 border-emerald-200';
-    if (score >= 80) return 'text-blue-700 bg-blue-50 border-blue-200';
-    return 'text-text-primary bg-surface border-border';
+  const matchScore = job.similarity ? Math.round(job.similarity * 100) : null;
+  const tier = getMatchTier(matchScore);
+  const config = tierConfig[tier];
+
+  // Parse why-match chips from insight_keyword (comma-separated or array)
+  const whyChips: string[] = job.why_chips 
+    ? job.why_chips 
+    : job.insight_keyword 
+      ? job.insight_keyword.split(',').map((s: string) => s.trim()).filter(Boolean).slice(0, 4)
+      : [];
+
+  const isSaved = applications.some(
+    (app) => app.title === job.title && app.company === job.company
+  );
+
+  const handleSaveToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaved) {
+      const savedApp = applications.find(
+        (app) => app.title === job.title && app.company === job.company
+      );
+      if (savedApp) {
+        await deleteApplication(savedApp.id);
+      }
+    } else {
+      await addApplication({
+        title: job.title,
+        company: job.company,
+        stage: 'saved',
+        matchScore: matchScore || undefined,
+        job_url: job.url || job.job_url,
+      });
+    }
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ y: -4 }}
-      className="group bg-white border border-border rounded-[2rem] p-6 flex flex-col h-full relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/[0.03] hover:border-text-tertiary/30"
+      layout
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.04 }}
+      className={`group bg-surface border rounded-3xl p-6 flex flex-col h-full relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-black/5 hover:-translate-y-1 ${
+        tier === 'strong' ? 'border-emerald-200 hover:border-emerald-300' : 
+        tier === 'good' ? 'border-amber-200 hover:border-amber-300' : 
+        'border-border hover:border-text-tertiary/40'
+      }`}
     >
-      {/* Perpetual micro-interaction glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-surface to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
-
-      {/* Match Score Indicator (only show if valid) */}
-      {matchScore !== null && (
-        <div className={`absolute top-6 right-6 px-3 py-1.5 rounded-[10px] border text-xs font-bold flex items-center gap-1.5 ${getScoreColor(matchScore)}`}>
-          <Sparkle weight="fill" className="w-3.5 h-3.5" />
-          {matchScore}% Match
-        </div>
-      )}
-
-      <div className="flex items-start gap-4 mb-6 relative z-10">
-        <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center border border-border overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-500">
+      {/* Header row */}
+      <div className="flex items-start gap-4 mb-6">
+        {/* Company logo */}
+        <div className="w-12 h-12 bg-surface-hover rounded-2xl flex items-center justify-center border border-border overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-500 ease-out">
           {job.logo_url ? (
             <img src={job.logo_url} alt={job.company} className="w-full h-full object-cover" />
           ) : (
-            <BuildingOffice className="w-7 h-7 text-text-tertiary" />
+            <BuildingOffice className="w-5 h-5 text-text-tertiary" />
           )}
         </div>
-        <div className="flex-1 pr-16">
-          <h3 className="font-bold text-xl text-text-primary line-clamp-1 mb-1">{job.title}</h3>
-          <p className="text-text-muted text-sm font-medium">{job.company}</p>
+
+        {/* Title + company */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-lg text-text-primary tracking-tight line-clamp-1 mb-1">{job.title}</h3>
+          <p className="text-text-muted text-sm font-medium truncate">{job.company}</p>
         </div>
+
+        {/* Save button */}
+        <button 
+          onClick={handleSaveToggle}
+          aria-label={isSaved ? "Unsave job" : "Save job"}
+          className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all border shrink-0 ${
+            isSaved 
+              ? 'text-text-primary bg-surface-hover border-border' 
+              : 'text-text-tertiary hover:text-text-primary hover:bg-surface-hover border-transparent hover:border-border'
+          }`}
+        >
+          <BookmarkSimple className="w-5 h-5" weight={isSaved ? "fill" : "regular"} />
+        </button>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6 relative z-10">
-        <div className="flex items-center gap-1.5 text-text-primary text-xs font-semibold px-3 py-1.5 bg-surface rounded-lg border border-border/50">
-          <MapPin className="w-3.5 h-3.5 text-text-muted" />
+      {/* Match confidence bar */}
+      {matchScore !== null && tier !== 'none' && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <div className={`flex items-center gap-1.5 text-xs font-bold ${config.text}`}>
+              <config.icon className="w-4 h-4" weight="fill" />
+              {config.label}
+            </div>
+            <span className={`font-mono text-xs font-bold ${config.text}`}>{matchScore}%</span>
+          </div>
+          <div className="h-1.5 bg-surface-hover rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${matchScore}%` }}
+              transition={{ type: "spring", stiffness: 50, damping: 20, delay: index * 0.04 + 0.2 }}
+              className={`h-full rounded-full ${config.bar}`}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Why this matches chips */}
+      {whyChips.length > 0 && (
+        <div className="mb-5">
+          <p className="text-[10px] uppercase tracking-widest font-bold text-text-tertiary mb-2">Match Vectors</p>
+          <div className="flex flex-wrap gap-2">
+            {whyChips.map((chip, i) => (
+              <span 
+                key={i}
+                className="text-xs font-medium px-3 py-1 bg-surface-hover text-text-primary rounded-full border border-border"
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Meta: location, salary */}
+      <div className="flex flex-wrap gap-3 mb-6 mt-auto">
+        <div className="flex items-center gap-1.5 text-text-muted text-sm font-medium">
+          <MapPin className="w-4 h-4 shrink-0" />
           <span className="truncate">{job.location || 'Remote'}</span>
         </div>
         {job.salary && (
-          <div className="flex items-center gap-1.5 text-text-primary text-xs font-semibold px-3 py-1.5 bg-surface rounded-lg border border-border/50">
-            <CurrencyDollar className="w-3.5 h-3.5 text-text-muted" />
-            <span>{job.salary}</span>
+          <div className="flex items-center gap-1.5 text-text-muted text-sm font-medium">
+            <CurrencyDollar className="w-4 h-4 shrink-0" />
+            <span className="font-mono">{job.salary}</span>
           </div>
         )}
       </div>
 
-      {(job.insight_keyword || job.insight_reason) && (
-        <div className="space-y-2 mb-8 relative z-10">
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-text-tertiary">
-            <ChartPie className="w-3.5 h-3.5" />
-            AI Insight
-          </div>
-          <p className="text-sm text-text-muted leading-relaxed line-clamp-2">
-            "Based on your background in <span className="font-medium text-text-primary">{job.insight_keyword}</span>, you're highly qualified for this role's <span className="font-medium text-text-primary">{job.insight_reason}</span> requirements."
-          </p>
-        </div>
-      )}
-
-      {/* Flex spacer to push buttons to bottom if insight is missing */}
-      <div className="flex-1" />
-
-      <div className="mt-auto flex items-center gap-3 relative z-10">
-        <Link 
-          href={`/jobs/${job.id}`}
-          className="flex-1 flex items-center justify-center gap-2 bg-white border border-border text-text-primary px-4 py-3 rounded-2xl text-sm font-bold hover:bg-surface transition-all active:scale-[0.98]"
+      {/* Actions */}
+      <div className="flex items-center gap-3">
+        <a 
+          href={job.job_url || job.url || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 flex-1 bg-surface-hover border border-border text-text-primary px-4 py-3 rounded-2xl text-sm font-bold hover:bg-white hover:border-text-tertiary/30 hover:shadow-sm transition-all active:scale-[0.98]"
         >
-          Details
-        </Link>
+          <ArrowSquareOut className="w-4 h-4" />
+          View
+        </a>
         <Link
           href={`/builder?tailor=${job.id}`}
-          className="flex-1 flex items-center justify-center gap-2 bg-accent text-white px-4 py-3 rounded-2xl text-sm font-bold hover:bg-accent-secondary hover:shadow-lg hover:shadow-accent/10 transition-all active:scale-[0.98] group/btn"
+          className="flex items-center justify-center gap-2 flex-1 bg-text-primary text-surface px-4 py-3 rounded-2xl text-sm font-bold transition-all hover:scale-[0.98] active:scale-[0.95] group/btn shadow-sm shadow-black/5"
         >
-          Tailor
-          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+          ✨ Tailor
+          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300 ease-out" />
         </Link>
       </div>
     </motion.div>

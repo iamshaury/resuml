@@ -9,14 +9,16 @@ import PropertiesPanel from '@/components/builder/PropertiesPanel';
 import TemplateSelector from '@/components/builder/TemplateSelector';
 import ResumePDF from '@/components/ResumePDF';
 import { useResumeStore } from '@/store/useResumeStore';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { 
   SquaresFour, 
   MagicWand, 
   DownloadSimple, 
   ArrowLeft,
   ShareNetwork,
-  ChartLineUp
+  ChartLineUp,
+  Lock,
+  Info
 } from '@phosphor-icons/react';
 import Link from 'next/link';
 
@@ -58,23 +60,35 @@ function BuilderContent() {
       </AnimatePresence>
 
       {/* Top Navbar */}
-      <header className="h-16 bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 z-10">
-        <div className="flex items-center gap-4">
+      <header className="h-14 bg-surface border-b border-border flex items-center justify-between px-5 shrink-0 z-10">
+        <div className="flex items-center gap-3">
           <Link href="/dashboard" className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-hover border border-transparent hover:border-border transition-colors">
             <ArrowLeft size={16} />
           </Link>
+          <div className="w-px h-4 bg-border" />
           <div className="flex flex-col">
-            <span className="text-sm font-bold">Frontend Engineer Resume</span>
-            <span className="text-[10px] text-text-muted">Last edited just now</span>
+            <span className="text-sm font-bold leading-none">{formData.name ? `${formData.name}'s Resume` : 'Untitled Resume'}</span>
+            <span className="text-[10px] text-text-muted">Builder · Last saved just now</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-text-muted px-4">Draft</span>
-          <div className="w-px h-4 bg-border mx-2"></div>
+          {/* Privacy badge */}
+          <div className="group relative">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-700 cursor-help">
+              <Lock size={12} weight="fill" />
+              Zero-Storage Active
+            </div>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-text-primary text-white text-[11px] rounded-xl px-3 py-2.5 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50 shadow-xl">
+              <p className="font-bold mb-1">🔒 Your Privacy is Protected</p>
+              <p className="text-white/70 leading-relaxed">Your PDF was parsed in-memory and discarded. Nothing is stored on our servers. All data lives in your browser only.</p>
+            </div>
+          </div>
+
+          <div className="w-px h-4 bg-border mx-1" />
           
-          <button className="h-9 px-4 flex items-center gap-2 rounded-lg text-xs font-bold hover:bg-surface-hover border border-transparent hover:border-border transition-colors">
-            <ChartLineUp size={16} />
+          <button className="h-8 px-3 flex items-center gap-1.5 rounded-lg text-xs font-bold hover:bg-surface-hover border border-transparent hover:border-border transition-colors text-text-muted">
+            <ChartLineUp size={14} />
             Analyze
           </button>
           
@@ -84,17 +98,12 @@ function BuilderContent() {
           >
             {/* @ts-ignore */}
             {({ loading }) => (
-              <button disabled={loading} className="h-9 px-4 flex items-center gap-2 rounded-lg text-xs font-bold bg-accent text-white hover:bg-accent-secondary transition-colors shadow-sm shadow-accent/20">
-                <DownloadSimple size={16} weight="bold" />
-                {loading ? 'Wait...' : 'Export'}
+              <button disabled={loading} className="h-8 px-3 flex items-center gap-1.5 rounded-lg text-xs font-bold bg-accent text-white hover:bg-accent-secondary transition-colors shadow-sm shadow-accent/20">
+                <DownloadSimple size={14} weight="bold" />
+                {loading ? 'Preparing...' : 'Export PDF'}
               </button>
             )}
           </PDFDownloadLink>
-
-          <button className="h-9 px-4 flex items-center gap-2 rounded-lg text-xs font-bold text-accent bg-accent-light hover:bg-accent/20 transition-colors border border-accent/10 ml-2">
-            <ShareNetwork size={16} weight="bold" />
-            Share
-          </button>
         </div>
       </header>
 
@@ -115,7 +124,12 @@ function BuilderContent() {
         </main>
 
         {/* Right Sidebar - Properties */}
-        <PropertiesPanel />
+        <PropertiesPanel 
+          isTailoring={isTailoring}
+          jobId={jobId}
+          data={formData}
+          onApply={handleDataChange}
+        />
 
       </div>
     </div>

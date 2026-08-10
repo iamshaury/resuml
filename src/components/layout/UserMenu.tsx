@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserCircle, SignOut, CaretDown } from "@phosphor-icons/react";
+import { UserCircle, SignOut, CaretDown, User } from "@phosphor-icons/react";
 import { supabase } from "@/utils/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -75,7 +75,18 @@ export default function UserMenu() {
                 <div className="text-sm font-bold text-text-primary truncate">{user.email}</div>
                 <div className="text-[10px] text-text-muted mt-1 uppercase tracking-widest font-black">Member ID: {user.id.slice(0, 8)}</div>
               </div>
-              <div className="p-2">
+              <div className="p-2 flex flex-col gap-1">
+                <button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push("/profile");
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-text-primary hover:bg-surface-hover transition-all"
+                >
+                  <User className="w-5 h-5 text-text-tertiary" />
+                  My Profile
+                </button>
+                
                 <button 
                   onClick={handleSignOut}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
