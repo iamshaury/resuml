@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore text and markdown files
+*.txt
+*.md
+
+# Ignore specific folders
+.agents/
+.codex/
+.impeccable/

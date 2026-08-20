@@ -9,8 +9,8 @@ Resuml is a high-performance **Resume Intelligence Suite** designed to bridge th
 
 ### Frontend
 *   **Framework**: Next.js 14 (App Router)
-*   **Styling**: Tailwind CSS + Custom Vanilla CSS for high-fidelity "Premium" aesthetic.
-*   **Animation**: Framer Motion (for smooth micro-interactions).
+*   **Styling**: Tailwind CSS + Custom Vanilla CSS built on the "Impeccable" Design System (vibrant, playful, high-agency bento-grid layouts).
+*   **Animation**: Framer Motion (for smooth, "gummy" micro-interactions and realistic UI mockups).
 *   **State Management**: Zustand (Client-side persistence for resume data).
 *   **PDF Generation**: `@react-pdf/renderer`.
 
@@ -144,3 +144,4 @@ graph TD
 1.  **Storage Efficiency**: Completely eliminated PDF storage in S3. The app now operates with a "Privacy First / Storage Zero" approach where data is extracted and then the file is discarded.
 2.  **Performance**: Batch embedding generation for jobs significantly reduces API latency during scraping.
 3.  **UI/UX**: Implemented "Direct Canvas Editing" using `contentEditable`, allowing users to type directly onto the resume template while automatically updating the underlying state.
+4.  **UI/UX Overhaul**: Completely redesigned the landing page using an "Impeccable" design philosophy. Replaced generic layouts with a dynamic bento-grid structure, wide high-agency hero typography, and animated, realistic UI components (e.g., live code-to-resume editor, interactive Kanban tracker) to provide an engaging, zero-friction user experience.
